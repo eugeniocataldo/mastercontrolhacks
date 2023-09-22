@@ -29,7 +29,7 @@ def go_to_image_and_click(image_path):
         
         try:
             click_location_x, click_location_y = pyautogui.locateCenterOnScreen(image_path)
-        except ImageNotFoundException:
+        except pyautogui.ImageNotFoundException:
             pyautogui.scroll(10)
         else:
             image_found = True
