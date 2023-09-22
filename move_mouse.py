@@ -44,12 +44,6 @@ def go_to_image_and_click(image_path):
     time.sleep(4) # Wait 4 seconds to make sure the click has been loaded
 
 
-
-
-print("Mouse is now at")
-print(pyautogui.position())
-
-
 def search_record(text_to_write):
 
     """
@@ -96,3 +90,8 @@ def move_record_forward():
     go_to_image_and_click(empty_space_below_comments) #TODO: Test whether you can see this, since you'd need to click on empty space
     go_to_image_and_click(sign_off_button) #TODO: Check whether I need to add a comment or if it can be e
 
+
+
+
+print("Mouse is now at")
+print(pyautogui.position())
