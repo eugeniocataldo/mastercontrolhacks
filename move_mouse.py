@@ -20,9 +20,11 @@ def go_to_image_and_click(image_path):
     """
     
     image_found = False
-    timeout = 300 # [seconds]
+    timeout = 60 # If the image is not found in 1 minute, return error
     timeout_start = time.time()
-    
+
+
+    ### Look for the image by scrolling
     while not image_found and time.time() < timeout_start + timeout:
         
         try:
@@ -36,26 +38,13 @@ def go_to_image_and_click(image_path):
     if time.time() < timeout_start + timeout:
         raise TimeoutError("Couldn't find the image within the time")
     
-
     
     pyautogui.click(click_location_x, click_location_y)
-    
-    
+
+    time.sleep(4) # Wait 4 seconds to make sure the click has been loaded
 
 
 
-print("Mouse is now at")
-print(pyautogui.position())
-
-PROCESS_TAB = (40, 499)
-SEARCH_PROCESS = (1080, 403)
-SEARCH_TEXTBOX = (287, 584)
-SUBMIT_SEARCH = (1554, 706)
-VIEW_INFOCARD = (1870, 501)
-STATUS_TAB_IN_RECORD = (1671, 713)
-# MODIFY_STEP = (???,???) # TODO: Find out if this position stays the same
-ADD_USER = (905, 602)
-duration = 1
 
 print("Mouse is now at")
 print(pyautogui.position())
