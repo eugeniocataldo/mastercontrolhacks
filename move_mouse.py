@@ -62,19 +62,20 @@ def add_user_to_record():
     This function adds a user to a record. You need to be inside a search and only have one record returned in your search
     """
 
-    go_to_image_and_click(view_infocard_button)
-    go_to_image_and_click(status_tab)
-    go_to_image_and_click(modify_step_icon)
-    go_to_image_and_click(add_user_icon)
+    click_on_image('images/view_infocard_button.PNG')
+    click_on_image('images/status_tab.PNG')
+    click_on_image('images/modify_step_icon.PNG')
+    click_on_image('images/add_user_icon.PNG')
 
     # Write the user to add in the textbox and press enter
     pyautogui.typewrite(user_to_add) 
     pyautogui.press('enter')
-    go_to_image_and_click(add_button)
-    go_to_image_and_click(save_button)
+    time.sleep(1)
+    click_on_image('images/add_button.PNG')
+    click_on_image('images/save_button.PNG', confidence=0.8)
     pyautogui.typewrite("Adding user to record")
-    go_to_image_and_click(save_button_second_step) #TODO: Test if it finds the right one 
-    go_to_image_and_click(close)
+    click_on_image('images/save_button_second_step.PNG') #TODO: Test if it finds the right one 
+    click_on_image('images/close_button.PNG')
 
 
 def move_record_forward():
@@ -83,12 +84,12 @@ def move_record_forward():
     This function moves a record to the next step (approves it). You need to be inside a search and only have one record returned in your search
     """
 
-    go_to_image_and_click(open_task_button)
-    go_to_image_and_click(sign_off_button)
-    go_to_image_and_click(empty_space_below_status) #TODO: Test whether you can see this, since you'd need to click on empty space
-    go_to_image_and_click(data_approval)
-    go_to_image_and_click(empty_space_below_comments) #TODO: Test whether you can see this, since you'd need to click on empty space
-    go_to_image_and_click(sign_off_button) #TODO: Check whether I need to add a comment or if it can be e
+    click_on_image(open_task_button)
+    click_on_image(sign_off_button)
+    click_on_image(empty_space_below_status) #TODO: Test whether you can see this, since you'd need to click on empty space
+    click_on_image(data_approval)
+    click_on_image(empty_space_below_comments) #TODO: Test whether you can see this, since you'd need to click on empty space
+    click_on_image(sign_off_button) #TODO: Check whether I need to add a comment or if it can be e
 
 
 
