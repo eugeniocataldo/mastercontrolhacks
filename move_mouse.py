@@ -9,16 +9,56 @@ work on a different-sized monitor
 #TODO: Add pauses or figure out if the click function can have a timer
 
 import pyautogui, time
+pyautogui.useImageNotFoundException()
 
-def go_to_image_and_click(image_path):
+
+
+def select_image(all_images, position):
+
+
+    """
+    Helper function for look_for_image, to tackle the case in which there are multiple images
+
+    Inputs:
+    - all_images (iterator from pyautogui.locateAllOnScreen()): Iterator containin all the images on screen
+    - position (string): Text with where the image is
+
+    """
+
+    left_pixels = []
+    top_pixels = []
+    images = []
+
+    for image in all_images:
+        images.append(image)
+        left_pixels.append(image.left)
+        top_pixels.append(image.top)
+
+    if position == 'Top':
+        my_index = top_pixels.index(min(top_pixels))
+    else:
+        raise NotImplementedError("The position you want is not implemented")
+    
+    print(images)
+
+    selected_image = images[my_index]
+    center_x = selected_image.left + selected_image.width/2
+    center_y = selected_image.top + selected_image.height/2
+
+    return center_x, center_y
+
+
+def look_for_image(image_path, multiple_images=False, confidence=0.999):
 
     """
     This function takes a filepath for an image and finds it on the screen
     
     Inputs:
     - image_path (string): filepath for the image to look for
+    - multiple_images (bool): True if the image comes more times in the screen (default False)
+    - confidence (float): confidence for the image location algorithm (default is the function default)
     """
-    
+
     image_found = False
     timeout = 60 # If the image is not found in 1 minute, return error
     timeout_start = time.time()
@@ -28,20 +68,44 @@ def go_to_image_and_click(image_path):
     while not image_found and time.time() < timeout_start + timeout:
         
         try:
-            click_location_x, click_location_y = pyautogui.locateCenterOnScreen(image_path)
+            if multiple_images:
+                all_images = pyautogui.locateAllOnScreen(image_path)
+            else:
+                click_location_x, click_location_y = pyautogui.locateCenterOnScreen(image_path, confidence=confidence)
         except pyautogui.ImageNotFoundException:
-            pyautogui.scroll(10)
+            pyautogui.scroll(-50)
+            print("Image not found, scrolling down")
         else:
             image_found = True
             
-            
-    if time.time() < timeout_start + timeout:
+    if time.time() > timeout_start + timeout:
         raise TimeoutError("Couldn't find the image within the time")
     
+    if multiple_images:
+        click_location_x, click_location_y = select_image(all_images=all_images, position="Top") #For now it's only the top one, will check if more are needed
+        #TODO: If it remains only top, can probably delete because it automatically picks the top one
+    
+    return click_location_x, click_location_y
+
+
+
+
+def click_on_image(image_path, multiple_images=False, confidence=0.999):
+
+    """
+    This function takes a filepath for an image and finds it on the screen
+    
+    Inputs:
+    - image_path (string): filepath for the image to look for
+    - multiple_images (bool): True if the image comes more times in the screen (default False)
+    """
+    
+    click_location_x, click_location_y = look_for_image(image_path, confidence=confidence)
     
     pyautogui.click(click_location_x, click_location_y)
 
     time.sleep(4) # Wait 4 seconds to make sure the click has been loaded
+    print("Done with one click! Moving to the next")
 
 
 def search_record(text_to_write):
@@ -50,13 +114,16 @@ def search_record(text_to_write):
     This function runs a search function within processes in MasterControl. You need to be in the main page (you need to see the tabs on the left)
     """
 
-    go_to_image_and_click(process_tab)
-    go_to_image_and_click(search_button)
+    click_on_image('images/process_tab.PNG', confidence=0.8)
+    click_on_image('images/search_button.PNG')
+    for _ in range(40):
+        pyautogui.press('delete')
     pyautogui.typewrite(text_to_write)
-    go_to_image_and_click(submit_search_button)
+    time.sleep(1)
 
+    click_on_image('images/submit_search_button.PNG', confidence=0.8)
 
-def add_user_to_record():
+def add_user_to_record(user_to_add):
 
     """
     This function adds a user to a record. You need to be inside a search and only have one record returned in your search
@@ -80,6 +147,8 @@ def add_user_to_record():
 
 def move_record_forward():
 
+    ### UNTESTED
+
     """
     This function moves a record to the next step (approves it). You need to be inside a search and only have one record returned in your search
     """
@@ -96,3 +165,15 @@ def move_record_forward():
 
 print("Mouse is now at")
 print(pyautogui.position())
+
+
+search_record('OOS-OOT-2023-0404')
+add_user_to_record("Eugenio")
+
+
+### Testing box
+# x, y = look_for_image('images/process_tab.PNG', confidence=0.8)
+# pyautogui.moveTo(x, y, duration=1)
+
+
+
