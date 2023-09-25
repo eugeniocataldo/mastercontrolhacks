@@ -90,7 +90,7 @@ def look_for_image(image_path, multiple_images=False, confidence=0.999):
 
 
 
-def click_on_image(image_path, multiple_images=False, confidence=0.999):
+def click_on_image(image_path, multiple_images=False, confidence=0.8):
 
     """
     This function takes a filepath for an image and finds it on the screen
@@ -104,7 +104,7 @@ def click_on_image(image_path, multiple_images=False, confidence=0.999):
     
     pyautogui.click(click_location_x, click_location_y)
 
-    time.sleep(4) # Wait 4 seconds to make sure the click has been loaded
+    time.sleep(1) # Wait 4 seconds to make sure the click has been loaded
     print("Done with one click! Moving to the next")
 
 
@@ -115,21 +115,24 @@ def search_record(text_to_write):
     """
 
     click_on_image('images/process_tab.PNG', confidence=0.8)
-    click_on_image('images/search_button.PNG')
+    click_on_image('images/search_button.PNG', confidence=0.8)
     for _ in range(40):
         pyautogui.press('delete')
     pyautogui.typewrite(text_to_write)
     time.sleep(1)
 
     click_on_image('images/submit_search_button.PNG', confidence=0.8)
+    print("Finished with searching")
 
 def add_user_to_record(user_to_add):
 
     """
     This function adds a user to a record. You need to be inside a search and only have one record returned in your search
     """
-
+    print("Starting to add user")
+    time.sleep(2)
     click_on_image('images/view_infocard_button.PNG')
+    print("Here already")
     click_on_image('images/status_tab.PNG')
     click_on_image('images/modify_step_icon.PNG')
     click_on_image('images/add_user_icon.PNG')
@@ -137,28 +140,38 @@ def add_user_to_record(user_to_add):
     # Write the user to add in the textbox and press enter
     pyautogui.typewrite(user_to_add) 
     pyautogui.press('enter')
-    time.sleep(1)
-    click_on_image('images/add_button.PNG')
+    time.sleep(4)
+    click_on_image('images/add_button.PNG', confidence=0.999)
     click_on_image('images/save_button.PNG', confidence=0.8)
     pyautogui.typewrite("Adding user to record")
     click_on_image('images/save_button_second_step.PNG') #TODO: Test if it finds the right one 
     click_on_image('images/close_button.PNG')
 
 
-def move_record_forward():
+def move_record_forward(approve, sign_off_message):
 
     ### UNTESTED
 
     """
     This function moves a record to the next step (approves it). You need to be inside a search and only have one record returned in your search
+    
+    Inputs:
+    - approve (bool): True if need to approve the record, false if need to reject the record
+    - sign_off_message (string): string containing the text to write in the comments when moving the record
     """
 
-    click_on_image(open_task_button)
-    click_on_image(sign_off_button)
-    click_on_image(empty_space_below_status) #TODO: Test whether you can see this, since you'd need to click on empty space
-    click_on_image(data_approval)
-    click_on_image(empty_space_below_comments) #TODO: Test whether you can see this, since you'd need to click on empty space
-    click_on_image(sign_off_button) #TODO: Check whether I need to add a comment or if it can be e
+    click_on_image('images/open_task_button.PNG')
+    click_on_image('images/sign_off_button.PNG', confidence=0.8)
+    click_on_image('images/empty_space_below_status.PNG', confidence=0.8) #TODO: Test whether you can see this, since you'd need to click on empty space
+    if approve:
+        click_on_image('images/data_approval.PNG', confidence=0.8) #TODO: Check if it works because it changes when hovering over it with the cursor
+    else:
+        click_on_image('images/data_rejection.PNG', confidence=0.8) #TODO: Check if it works because it changes when hovering over it with the cursor
+    click_on_image('images/empty_space_below_electronic_signature.PNG', confidence=0.8)
+    click_on_image('images/my_saved_password.PNG', confidence=0.8)    
+    click_on_image('images/empty_space_below_comments.PNG', confidence=0.8) #TODO: Test whether you can see this, since you'd need to click on empty space
+    pyautogui.typewrite(sign_off_message)
+    click_on_image('images/sign_off_button_second_step.PNG', confidence=0.8) #TODO: Check whether I need to add a comment or if it can be e
 
 
 
@@ -167,13 +180,17 @@ print("Mouse is now at")
 print(pyautogui.position())
 
 
-search_record('OOS-OOT-2023-0404')
-add_user_to_record("Eugenio")
+#search_record('OOS-OOT-2023-0404')
+#add_user_to_record("Eugenio")
+#search_record('OOS-OOT-2023-0404')
+move_record_forward(approve=False, sign_off_message="Testing")
+#search_record('OOS-OOT-2023-0404')
+#add_user_to_record("Eugenio")
 
 
 ### Testing box
-# x, y = look_for_image('images/process_tab.PNG', confidence=0.8)
-# pyautogui.moveTo(x, y, duration=1)
+x, y = look_for_image('images/empty_space_below_status.PNG', confidence=0.8)
+pyautogui.moveTo(x, y, duration=1)
 
 
 
